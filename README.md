@@ -14,4 +14,4 @@ During the COVID-19 pandemic, vaccination continues to be critically important. 
 HOW DOES WHO IS HELP ENSURE VACCINE SAFETY ?
 
 WHO works to ensure that everyone, everywhere is protected by safe and effective vaccines. To do this, we help countries set up rigorous safety systems for vaccines and apply strict international standards to regulate them.
-Together with scientists from around the world, WHO experts conduct ongoing monitoring to make sure that vaccines continue to be safe. We also work with partners to help countries investigate and communicate if potential issues of concern arise.
+Together with scientists from around the world, WHO experts conduct ongoing monitoring to make sure that vaccines continue to be safe. We also work with partners to help countries investigate and communicate if potential issues of concern arise.Any unexpected adverse side effects that are reported to WHO are evaluated by an independent group of experts called the Global Advisory Committee on Vaccine Safety. 
