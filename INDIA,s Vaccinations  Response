@@ -1,0 +1,98 @@
+INDIA's VACCINATION RESPONSE
+
+## Import libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from matplotlib import style
+
+style.use('dark_background')
+
+font = {'family' : 'sans-serif', 'weight' : 'bold', 'size' : 25}
+
+plt.rc('font', **font)
+plt.rc('xtick', labelsize=20)
+plt.rc('ytick', labelsize=20)
+plt.rcParams['figure.figsize'] = (15, 8)
+
+## Import the Data set
+
+covid = pd.read_csv("country_vaccinations.csv", parse_dates = ['date'])
+covid.head()
+
+ind = covid[covid['country'] == 'India']
+ind.isna().sum()
+
+def GroupByCountryAndDaily(covid):
+    groups = covid.groupby('country')
+    dailies = {}
+    for name, group in groups:
+        dailies[name] = GroupByDay(group)
+    return dailies
+
+def GroupByDay(covid, function = np.mean):
+    grouped = covid[['date', 'people_vaccinated_per_hundred', 'people_fully_vaccinated', 'people_vaccinated', 'people_fully_vaccinated_per_hundred', 'daily_vaccinations_raw']].groupby('date')
+    daily = grouped.aggregate(function)
+    daily['date'] = daily.index
+    return daily
+    
+    ind.loc[:, 'people_fully_vaccinated'].fillna(0.0, inplace = True)
+ind.loc[:, 'people_fully_vaccinated_per_hundred'].fillna(0.0, inplace = True)
+ind.loc[:, 'daily_vaccinations_raw'].fillna(0.0, inplace = True)
+
+ind.isna().sum()
+
+dailies = GroupByCountryAndDaily(ind)
+
+ind_covid = pd.DataFrame(dailies['India'])
+ind_covid.dropna(0, inplace = True)
+ind_covid.head()
+
+ind_covid.iloc[:, 1:3] = ind_covid.iloc[:, 1:3] /1000
+ind_covid.iloc[:,4] = ind_covid.iloc[:, 4] / 1000
+
+columns = {'people_vaccinated_per_hundred': 'people vaccinated per hundred',
+           'people_fully_vaccinated': 'people fully vaccinated',
+           'people_vaccinated': 'people vaccinated',
+           'people_fully_vaccinated_per_hundred': 'people fully vaccinated per hundred',
+           'daily_vaccinations_raw': 'daily vaccinations raw'}
+
+ind_covid.rename(columns = columns, inplace = True)
+ind_covid.head()
+
+## Analysis of the number and the percentage of people vaccinated 
+
+ind_covid[['people vaccinated per hundred', 'people fully vaccinated per hundred']].plot(ylabel = '% vaccinated', linewidth = 3)
+plt.grid()
+
+ind_covid[['people vaccinated', 'people fully vaccinated']].plot(ylabel = '(in 1000) vaccinated', linewidth = 3)
+plt.grid()
+
+# Analytic distribution of number of people vaccinated
+
+def EvalCcovid(sample, x):
+    count = 0
+    for i in sample:
+        if i <= x:
+            count += 1
+    return count / len(sample)
+    
+    vaccinated = sorted(ind_covid['people vaccinated'].values)
+ccovid = [EvalCcovid(vaccinated, x) for x in vaccinated]
+
+plt.plot(vaccinated, ccovid, linewidth = 3)
+plt.grid()
+
+# Analysis of the number of people being vaccinated daily
+
+plt.bar(ind_covid.index[1:], ind_covid['daily vaccinations raw'][1:].values, label = 'daily vaccinations')
+plt.xlabel('date')
+plt.ylabel('(in 1000)daily vaccination numbers')
+plt.axhline(y = np.median(ind_covid['daily vaccinations raw'].values), color = 'maroon', ls = ':', linewidth = 10, label = 'population mean')
+plt.legend(loc = 9)
+plt.xticks(rotation = 90)
+plt.grid()
+
+
