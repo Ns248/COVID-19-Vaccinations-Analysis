@@ -1,0 +1,52 @@
+WORLD VACCINATIONS PROGRESS
+
+
+##Import libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+## Import data files
+
+covid =pd.read_csv("country_vaccinations.csv")
+covid.head()
+covid.info()
+
+## Check the percentage of missing Data
+
+round(100*(covid.isnull().sum()/len(covid.index)),2)
+
+## Replacing all NAN values with 0
+
+covid.loc[np.isnan(covid['total_vaccinations']),['total_vaccinations']] = 0
+covid.loc[np.isnan(covid['people_vaccinated']),['people_vaccinated']] = 0
+covid.loc[np.isnan(covid['people_fully_vaccinated']),['people_fully_vaccinated']] = 0
+covid.loc[np.isnan(covid['daily_vaccinations_raw']),['daily_vaccinations_raw']] = 0
+covid.loc[np.isnan(covid['daily_vaccinations']),['daily_vaccinations']] = 0
+covid.loc[np.isnan(covid['total_vaccinations_per_hundred']),['total_vaccinations_per_hundred']] = 0
+covid.loc[np.isnan(covid['people_vaccinated_per_hundred']),['people_vaccinated_per_hundred']] = 0
+covid.loc[np.isnan(covid['people_fully_vaccinated_per_hundred']),['people_fully_vaccinated_per_hundred']] = 0
+covid.loc[np.isnan(covid['daily_vaccinations_per_million']),['daily_vaccinations_per_million']] = 0
+
+## Calculating the sum of all columns for each country
+
+covid.groupby([covid.country]).sum().sort_values(by='total_vaccinations',ascending=False)
+
+## Top 5 Countries for Daily Vaccinations
+
+plt.figure(figsize=[10,10])
+covid_top5 = covid.groupby([covid.country]).sum().sort_values(by='total_vaccinations',ascending=False)[0:10]
+covid_top5
+covid_top5['daily_vaccinations'].plot.bar()
+plt.show
+
+## Countries at the end of the Covid19 Vaccionation drive
+
+plt.figure(figsize=[10,10])
+covid_top5 = covid.groupby([covid.country]).sum().sort_values(by='total_vaccinations',ascending=False)[-11:-1]
+covid_top5
+covid_top5['daily_vaccinations'].plot.bar()
+plt.show()
